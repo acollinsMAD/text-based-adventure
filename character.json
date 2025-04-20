@@ -1,0 +1,10 @@
+{
+    "name": "Alex",
+    "class": "warrior",
+    "str": 1,
+    "dex": 3,
+    "agi": 6,
+    "int": 5,
+    "initiative": 3,
+    "saves": 4
+}
