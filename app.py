@@ -12,7 +12,21 @@ class Character:
             "agi": 0,
             "int": 0,
             "initiative": 0,
-            "saves": 0
+            "saves": 0,
+            "gold": 0,
+            "inventory": [],
+            "level": 1,
+            "xp": 0,
+            "health": 0,
+            "armor": 0,
+            "damage": 0,
+            "mana": 0,
+            "magic_damage": 0,
+            "magic_armor": 0,
+            "magic_resistance": 0,
+            "magic_health": 0,
+            "magic_armor_class": 0,
+            "magic_damage_bonus": 0
         }
 
     def roll_stats(self):
@@ -64,14 +78,126 @@ def create_character():
 
     return Character(name, char_class)
 
+#class to handle random generated monsters
+class Monster:
+    def __init__(self, name, stats):
+        self.name = name
+        self.stats = stats
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            **self.stats
+        }
+
+    @staticmethod
+    def generate_monster():
+        names = ["Goblin", "Orc", "Troll", "Dragon"]
+        name = random.choice(names)
+        stats = {
+            "str": random.randint(1, 10),
+            "dex": random.randint(1, 10),
+            "agi": random.randint(1, 10),
+            "int": random.randint(1, 10)
+        }
+        return Monster(name, stats)
+    
+#function to handle combat
+def combat(character, monster):
+    print(f"You encounter a {monster.name}!")
+    #add logic for combat
+    while True:
+        action = input("Do you want to attack or flee? ").lower()
+        if action == "attack":
+            print(f"You attack the {monster.name}!")
+            #add logic for attack
+            break
+        elif action == "flee":
+            print("You flee from the battle!")
+            break
+        else:
+            print("Invalid action. Please choose 'attack' or 'flee'.")
+
+#add logic for the treasure event
+def treasure(Character):
+    #add logic to give the character treasure
+    print("You open the treasure chest and find gold coins!")
+    #add the treasure to the characters gold stat
+    Character.stats['gold'] += random.randint(1, 100)
+    print(f"You now have {Character.stats['gold']} gold coins.")
+
+#function to generate exploration options
+def explore():
+    events = [
+        "You find a treasure chest!",
+        "You encounter a wild beast!",
+        "You discover a hidden cave!",
+        "You meet a mysterious stranger!",
+        "You stumble upon an ancient ruin!"
+    ]
+    #randomly chooses an event
+    event = random.choice(events)
+    print(event)
+    #add logic for specific events
+    #for example, if the event is a treasure chest, you can add logic to open it
+    if "treasure" in event:
+        treasure(Character)
+    elif "beast" in event:
+        print("You prepare to fight the beast!")
+        generatedMonster = Monster.generate_monster()
+        monster = generatedMonster
+        combat(Character, monster)
+    elif "cave" in event:
+        print("You enter the cave and find it filled with strange crystals!")
+    elif "stranger" in event:
+        print("The stranger offers you a quest!")
+    elif "ruin" in event:
+        print("You explore the ruins and find ancient artifacts!")
+    #add more events and logic as needed
+    #return the event for further processing if needed
+    return event
+
 # Main program logic
 def main():
+    #create the character
     character = create_character()
     character.roll_stats()
     print("Your stats are:")
     for stat, value in character.stats.items():
         print(f"{stat.capitalize()}: {value}")
     character.save_to_file()
-
+    
+    #start the game
+    print("You start your adventure!")
+    print("You are unfamiliar with these lands")
+    print("But you are familiar with your abilities.")
+    print("You can explore the world around you.")
+    
+    #gives the player the option to explore, save character, rest to heal, or exit the game.
+    while True:
+        print("What would you like to do? (explore, save, rest, exit)")
+        action = input().lower()
+        if action == "explore":
+            explore()
+        elif action == "save":
+            character.save_to_file()
+            print("Character saved!")
+        elif action == "rest":
+            print("You rest and regain your strength.")
+            #add logic to heal the character
+        elif action == "exit":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid action. Please choose 'explore', 'save', 'rest', or 'exit'.")
+            
+    #load character from file if it exists
+    loaded_character = Character.load_from_file()
+    if loaded_character:
+        print(f"Loaded character: {loaded_character.name}, Class: {loaded_character.char_class}")
+        for stat, value in loaded_character.stats.items():
+            print(f"{stat.capitalize()}: {value}")
+    else:
+        print("No character loaded.")
 if __name__ == "__main__":
     main()
